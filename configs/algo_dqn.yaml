@@ -1,0 +1,27 @@
+algo:
+
+  # optimizer
+  learning_rate: 0.0001
+
+  # replay buffer
+  buffer_size: 100000
+  learning_starts: 50000
+  batch_size: 32
+
+  # RL core parameters
+  gamma: 0.99
+
+  # training frequency
+  train_freq: 4
+  gradient_steps: 1
+
+  # target network update
+  target_update_interval: 10000
+
+  # epsilon-greedy exploration
+  exploration_fraction: 0.1
+  exploration_initial_eps: 1.0
+  exploration_final_eps: 0.01
+
+  # gradient clipping
+  max_grad_norm: 10.0
