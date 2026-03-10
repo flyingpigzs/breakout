@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-data = np.load("outputs/runs/20260308_112312/eval_logs/evaluations.npz")
+data = np.load("outputs/runs/20260310_214724_breakout_dqn/eval_logs/evaluations.npz")
 
 timesteps = data["timesteps"]
 results = data["results"]

@@ -1,0 +1,8 @@
+matplotlib
+numpy
+opencv-python
+stable-baselines3
+gymnasium
+ale-py
+pyyaml
+stable-baselines3[extra]

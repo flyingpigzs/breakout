@@ -1,7 +1,7 @@
 train:
 
   # total environment steps for training
-  total_timesteps: 10000000
+  total_timesteps: 1_000_000
 
   # evaluation settings
   eval_freq: 10000
