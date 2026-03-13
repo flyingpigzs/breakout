@@ -1,14 +1,11 @@
 train:
 
   # total environment steps for training
-  total_timesteps: 1_000_000
+  total_timesteps: 5_000_000
 
   # evaluation settings
   eval_freq: 10000
-  n_eval_episodes: 50
-
-  # run naming
-  run_name: breakout_dqn
+  n_eval_episodes: 10
 
   # logging
   tensorboard: true

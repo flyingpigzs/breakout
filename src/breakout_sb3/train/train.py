@@ -1,6 +1,7 @@
 from datetime import datetime
 from pathlib import Path
 import json
+import torch
 
 from stable_baselines3 import DQN, PPO
 
@@ -8,15 +9,23 @@ from breakout_sb3.envs.make_env import make_eval_env, make_train_env
 from breakout_sb3.train.callbacks import build_callbacks
 
 
+def _get_device():
+    if torch.cuda.is_available():
+        print("Using CUDA")
+        return "cuda"
+    else:
+        print("Using CPU")
+        return "cpu"
+
+
 def _create_run_dir(cfg: dict) -> Path:
     base_dir = Path("outputs") / "runs"
     base_dir.mkdir(parents=True, exist_ok=True)
 
-    algo_name = cfg["algo"].get("name", "unknown")
-    run_name = cfg["train"].get("run_name", f"breakout_{algo_name}")
+    algo_name = cfg["algo"].get("name", "unknown").lower()
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
-    run_dir = base_dir / f"{timestamp}_{run_name}"
+    run_dir = base_dir / f"{timestamp}_breakout_{algo_name}"
     run_dir.mkdir(parents=True, exist_ok=True)
 
     return run_dir
@@ -30,10 +39,41 @@ def _save_config_snapshot(cfg: dict, run_dir: Path):
 
 def _build_model(cfg: dict, train_env, run_dir: Path):
     algo_cfg = cfg["algo"]
+    train_cfg = cfg["train"]
+
     algo_name = algo_cfg["name"].lower()
+
+    device = _get_device()
 
     tb_dir = run_dir / "tb"
     tb_dir.mkdir(parents=True, exist_ok=True)
+
+    resume_path = train_cfg.get("resume_model", None)
+
+    if resume_path is not None:
+
+        print("Resuming from:", resume_path)
+
+        if algo_name == "ppo":
+            model = PPO.load(
+                resume_path,
+                env=train_env,
+                device=device,
+                tensorboard_log=str(tb_dir),
+            )
+
+        elif algo_name == "dqn":
+            model = DQN.load(
+                resume_path,
+                env=train_env,
+                device=device,
+                tensorboard_log=str(tb_dir),
+            )
+
+        else:
+            raise ValueError("Unknown algo")
+
+        return model
 
     if algo_name == "dqn":
         model = DQN(
@@ -53,6 +93,7 @@ def _build_model(cfg: dict, train_env, run_dir: Path):
             max_grad_norm=algo_cfg.get("max_grad_norm", 10.0),
             tensorboard_log=str(tb_dir),
             verbose=1,
+            device=device,
         )
         return model
 
@@ -72,6 +113,7 @@ def _build_model(cfg: dict, train_env, run_dir: Path):
             max_grad_norm=algo_cfg.get("max_grad_norm", 0.5),
             tensorboard_log=str(tb_dir),
             verbose=1,
+            device=device,
         )
         return model
 
@@ -95,6 +137,7 @@ def train(cfg: dict):
         total_timesteps=total_timesteps,
         callback=callback,
         progress_bar=True,
+        reset_num_timesteps=False,
     )
 
     final_model_path = run_dir / "final_model"
