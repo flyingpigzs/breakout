@@ -5,7 +5,7 @@ from stable_baselines3.common.vec_env import VecFrameStack, SubprocVecEnv, Dummy
 
 from gymnasium.wrappers import ResizeObservation, GrayscaleObservation
 
-from breakout_sb3.envs.wrappers import ClipRewardEnv, CropObservation
+from breakout_sb3.envs.wrappers import ClipRewardEnv, CropObservation, EpisodicLifeEnv
 
 # Create the raw Gymnasium env instance. No wrappers here.
 def _make_base_env(env_id: str, render_mode: str | None = None):
@@ -18,6 +18,7 @@ def _apply_wrappers(env, cfg, is_eval):
     env = Monitor(env)
 
     if not is_eval:
+        env = EpisodicLifeEnv(env)
         env = ClipRewardEnv(env)
 
     env = CropObservation(env)
