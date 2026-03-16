@@ -1,7 +1,7 @@
 torch
 matplotlib
 numpy
-opencv-python
+opencv-python-headless
 stable-baselines3
 gymnasium
 ale-py

@@ -79,3 +79,57 @@ class EpisodicLifeEnv(gym.Wrapper):
         self.lives = self.env.unwrapped.ale.lives()
 
         return obs, info
+
+
+import gymnasium as gym
+
+
+class FireResetEnv(gym.Wrapper):
+    """
+    Automatically press FIRE:
+    - after a true reset
+    - after life loss (when the game waits for a new launch)
+
+    Assumes action meanings include "FIRE".
+    """
+
+    def __init__(self, env):
+        super().__init__(env)
+
+        if not hasattr(env.unwrapped, "get_action_meanings"):
+            raise ValueError("Environment does not provide action meanings().")
+
+        self.action_meanings = env.unwrapped.get_action_meanings()
+        if "FIRE" not in self.action_meanings:
+            raise ValueError("Environment does not support FIRE action.")
+
+        self.fire_action = self.action_meanings.index("FIRE")
+        self.lives = 0
+
+    def reset(self, **kwargs):
+        obs, info = self.env.reset(**kwargs)
+        self.lives = self.env.unwrapped.ale.lives()
+
+        # Start the game
+        obs, reward, terminated, truncated, info = self.env.step(self.fire_action)
+
+        # Rare safeguard
+        if terminated or truncated:
+            obs, info = self.env.reset(**kwargs)
+            self.lives = self.env.unwrapped.ale.lives()
+
+        return obs, info
+
+    def step(self, action):
+        obs, reward, terminated, truncated, info = self.env.step(action)
+
+        new_lives = self.env.unwrapped.ale.lives()
+        life_lost = (new_lives < self.lives) and (new_lives > 0)
+
+        if life_lost and not (terminated or truncated):
+            # Relaunch ball automatically after losing a life
+            obs, extra_reward, terminated, truncated, info = self.env.step(self.fire_action)
+            reward += extra_reward
+
+        self.lives = new_lives
+        return obs, reward, terminated, truncated, info
