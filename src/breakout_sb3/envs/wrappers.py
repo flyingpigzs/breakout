@@ -81,9 +81,6 @@ class EpisodicLifeEnv(gym.Wrapper):
         return obs, info
 
 
-import gymnasium as gym
-
-
 class FireResetEnv(gym.Wrapper):
     """
     Automatically press FIRE:
