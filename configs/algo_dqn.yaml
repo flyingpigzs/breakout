@@ -1,4 +1,5 @@
 algo:
+  name: "dqn"
 
   # optimizer
   learning_rate: 0.0001
@@ -16,7 +17,7 @@ algo:
   gradient_steps: 1
 
   # target network update
-  target_update_interval: 10000
+  target_update_interval: 5000
 
   # epsilon-greedy exploration
   exploration_fraction: 0.1

@@ -1,13 +1,29 @@
-python -m venv venv
+# GYMNASIUM/BREAKOUT
 
-source venv/bin/activate
+## Installation
 
-pip install -r requirements.txt
+1. python -m venv venv
 
-pip install -e .
+2. source venv/bin/activate
+
+3. pip install -r requirements.txt
+
+4. pip install -e .
+
+## Training
+
+### Training from scratch
 
 python scripts/train.py --algo dqn/ppo
 
+### Training from the exiting 
+
+python scripts/train.py --algo dqn/ppo --resume "Path to model.zip to continue training"
+
+## Evaluating
+
 python scripts/eval.py --algo dqn/ppo --model-path "path_to_model"
 
-python scripts/plot.py
+## Plotting
+
+python scripts/plot.py --log-path "path_to_logfile"

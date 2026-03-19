@@ -1,0 +1,9 @@
+torch
+matplotlib
+numpy
+opencv-python-headless
+stable-baselines3
+gymnasium
+ale-py
+pyyaml
+stable-baselines3[extra]
