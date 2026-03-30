@@ -2,8 +2,6 @@
 
 This project implements reinforcement learning agents (DQN and PPO) for the Atari Breakout environment using Gymnasium and Stable-Baselines3.
 
----
-
 ## Installation
 
 1. Create a virtual environment:
