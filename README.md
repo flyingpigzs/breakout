@@ -34,7 +34,11 @@ pip install -e .
 
 ```bash
 python scripts/train.py --algo dqn
-# or
+```
+
+or
+
+```bash
 python scripts/train.py --algo ppo
 ```
 
